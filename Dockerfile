@@ -1,19 +1,25 @@
-FROM python:3.11-slim
+FROM python:3.11
 
-# Install all of the system dependencies
-# python3-tk and libg11-... are for the gui
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update && \
-    apt-get install -y python3-tk tk libgl1-mesa-glx && \
-    apt-get-clean
+    apt-get install -y --no-install-recommends \
+        python3-tk \
+        tk \
+        libgl1-mesa-glx \
+        libx11-6 \
+        libxext6 \
+        libxrender1 \
+        libsm6 \
+        libice6 \
+        wget \
+    && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Set Working Directory
 WORKDIR /app
 
-# Copy the programs files
 COPY . .
 
-# Install Python Dependencies
-RUN pip install --no-cache-dir -r requirments.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Command to run the program
 CMD ["python", "main.py"]

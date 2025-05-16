@@ -13,13 +13,14 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
 from io import BytesIO
-import os
 import redis
 import json
 
-# Runs a redis-server via docker
-redis_host = os.getenv("REDIS_HOST", "localhost")
-cache = redis.Redis(host=redis_host, port=6379, db=0, decode_responses=True)
+# This address goes from host to docker
+redis_host = "host.docker.internal"
+redis_port = 6379
+
+cache = redis.Redis(host=redis_host, port=redis_port, db=0, decode_responses=True)
 
 # This function get the country data from the API using the "requests" library
 def fetch_country_data():

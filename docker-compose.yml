@@ -1,16 +1,13 @@
 services:
-  app:
-    build: .
-    container_name: country_app
-    depends_on:
-      - redis
-    environment:
-      - REDIS_HOST=redis
-    volumes:
-      - .:/app
-    stdin_open: true
-    tty: true
-
   redis:
     image: redis:7
     container_name: redis_cache
+    ports:
+      - "6379:6379"
+
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge
