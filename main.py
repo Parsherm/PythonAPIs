@@ -1,9 +1,25 @@
 # Copyright 2025 Parker Sherman
+"""
+This is a simple project that communicates with the REST Countries API.
+It does so via the requests library that makes it very simple to get and 
+format information from the API. There is also a simple GUI implemented with
+TKinter that allows the user to search the country they want information on. 
+An Image of the country's flag is also shown via the Pillow (PIL) library. 
+While caching is slightly overboard for the amount of data, it is still implemented
+via Redis to improve the performance of the program
+"""
 import requests
 import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
 from io import BytesIO
+import os
+import redis
+import json
+
+# Runs a redis-server via docker
+redis_host = os.getenv("REDIS_HOST", "localhost")
+cache = redis.Redis(host=redis_host, port=6379, db=0, decode_responses=True)
 
 # This function get the country data from the API using the "requests" library
 def fetch_country_data():
@@ -12,11 +28,23 @@ def fetch_country_data():
         messagebox.showwarning("Input Error", "Please enter a valid country")
         return
     
-    url = f"https://restcountries.com/v3.1/name/{country}"
+
+    # The Redis cache is checked first to see if contacting 
+    # the API can be avoided
+    cached = cache.get(country)
+    if cached:
+        print("Loaded from Cache")
+        data = json.loads(cached)
+        display_country_data(data)
+        return
+
+    # Data is fetched from the API if not cached
+    url = f"https://restcountries.com/v3.1/name/{country}" # The URL for the REST Countries API
     try:
         response = requests.get(url)
         if response.status_code == 200:
             data = response.json()[0]
+            cache.set(country, json.dumps(data), ex=3600) # Data is cached for 1 hour
             display_country_data(data)
         else:
             messagebox.showerror("Error", f"Country '{country}' not found.")
