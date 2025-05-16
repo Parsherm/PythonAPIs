@@ -14,4 +14,5 @@ echo.
 echo ===============================
 echo   Program closed. Press any key to exit.
 echo ===============================
+docker-compose down
 pause
