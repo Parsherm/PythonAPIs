@@ -8,7 +8,7 @@ echo.
 echo ===============================
 echo   Launching Program...
 echo ===============================
-dist\main.exe
+python ./main.py
 
 echo.
 echo ===============================
