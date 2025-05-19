@@ -1,4 +1,4 @@
-# Python API Hands-on | Country Info Viewer (Tkinter + REST + Redis + Docker)
+# Python API Hands-on | Country Info Viewer (REST + Redis + Docker)
 
 I developed this project to gain experience with APIs in Python.
 
